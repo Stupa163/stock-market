@@ -10,6 +10,8 @@ URIS = [
 
 DIR = 'data-files/'
 
+ALERTS = {}
+
 
 def get_base_values(uris):
     max_values = {}
@@ -42,7 +44,7 @@ def new_max_value_to_file(uri, new_value):
 
 def alert_low_value(uri, low_value):
     # Implements the desired alert there
-    print('Alert ! Low value ! ' + low_value + ' for the ' + uri + ' stock')
+    print('Alert ! Low value ! ' + str(low_value) + ' for the ' + uri + ' stock')
 
 
 maxs = get_base_values(URIS)
@@ -55,7 +57,9 @@ while True:
             maxs[URI] = value
             new_max_value_to_file(URI, value)
         elif value < maxs[URI] * (float(95) / 100):
-            alert_low_value(URI, value)
+            if not URI in ALERTS or ALERTS[URI] < int(time.time()) :
+                ALERTS[URI] = int(time.time()) + 10
+                alert_low_value(URI, value)
 
         print(str(value) + ' => ' + str(maxs[URI]))
     time.sleep(2)
